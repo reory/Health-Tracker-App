@@ -38,6 +38,41 @@ The architecture follows a clean separation of concerns with repositories, valid
 
 ---
 
+# 📸 Screenshots
+
+## Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+## Appointments
+![Appointments](screenshots/appointments_screen.png)
+
+## Add Appointment
+![Add Appointment](screenshots/add_appointment_screen.png)
+
+## Edit Appointment
+![Edit Appointment](screenshots/edit_appointment_screen.png)
+
+## Medications
+![Medications](screenshots/edit_medication_screen.png)
+
+## Schedules
+![Schedules](screenshots/edit_schedulescreen.png)
+
+## Settings
+![Settings](screenshots/settings_screen.png)
+
+## Dark Mode
+![Dark Mode](screenshots/settingsdarkmode.png)
+
+## User Profile
+![User Profile](screenshots/userprofilescreenupdated.png)
+
+## Analytics Dashboard
+![Analytics Dashboard](screenshots/analyticsdashboard.png)
+
+
+---
+
 # 🧱 Architecture Overview
 
 The project is structured into clear, maintainable layers.
