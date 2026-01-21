@@ -3,8 +3,9 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Platform](https://img.shields.io/badge/Platform-Flet-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Last Commit](https://img.shields.io/github/last-commit/reory/Health-Tracker-App)
-![Repo Size](https://img.shields.io/github/repo-size/reory/Health-Tracker-App)
+![Last Commit](https://img.shields.io/github/last-commit/reory/Health-Tracker-App?cacheSeconds=60)
+![Repo Size](https://img.shields.io/github/repo-size/reory/Health-Tracker-App?cacheSeconds=60)
+
 
 
 A modern, modular health‑tracking application built with Python and Flet.  
