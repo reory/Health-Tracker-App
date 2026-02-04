@@ -26,7 +26,7 @@ def fig_to_image(fig) -> ft.Image:
     buf.seek(0)
     img_data = base64.b64encode(buf.read()).decode("utf-8")
     plt.close(fig)
-    return ft.Image(src_base64=img_data, expand=True)
+    return ft.Image(src_base64=img_data, expand=True) # type:ignore
 
 
 def build_intake_time_series(page: TypedPage) -> ft.Image:
