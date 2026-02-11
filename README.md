@@ -144,7 +144,8 @@ python main.py
 Planned enhancements and future improvements:
 
 - [ ] Add medication refill reminders  
-- [ ] Add data export/import (JSON or CSV)  
+- [ ] Add data export/import (JSON or CSV)
+- [ ] Add Analytics Integration (In Development): Utilizing Matplotlib and Numpy for health trend visualization.
 - [ ] Add charts for intake history  
 - [ ] Add cloud sync or optional online backup  
 - [ ] Add multi‑user profiles  
