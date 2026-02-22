@@ -78,7 +78,6 @@ The architecture follows a clean separation of concerns with repositories, valid
 ## Analytics Dashboard
 ![Analytics Dashboard](screenshots/analyticsdashboard.png)
 
-
 ---
 
 # 🧱 Architecture Overview
@@ -123,7 +122,6 @@ health_app/
 └── README.md
 ```
 
-
 ---
 
 # 🚀 Installation
@@ -133,10 +131,19 @@ health_app/
 ```bash
 git clone https://github.com/reory/Health-Tracker-App.git
 python -m venv venv
+# windows
 venv\Scripts\activate
+# mac/linux
+source venv/bin/activate
+```
+
+---
+
+```bash
 pip install -r requirements.txt
 python main.py
 ```
+
 ---
 
 # 🗺 Roadmap
@@ -155,10 +162,17 @@ Planned enhancements and future improvements:
 
 🧪 Test File
 A stripped‑down test file (test.py) is included for isolating UI behaviour.
+```bash
+pytest
+```
 
-🤝 Contributions
+---
+
+# 🤝 Contributions
 Contributions are welcome as always.
 
-👤 Author — Roy Peters
-Enjoy architecting clean, maintainable Python applications with clarity and purpose for everyone.
+---
+
+# 👤 Author — Roy Peters
+Enjoy architecting clean, maintainable Python applications with clarity and purpose for everyone. [Click here for contact details 😁](https://www.linkedin.com/in/roy-p-74980b382/)
 
