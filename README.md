@@ -6,8 +6,6 @@
 ![Last Commit](https://img.shields.io/github/last-commit/reory/Health-Tracker-App?cacheSeconds=60)
 ![Repo Size](https://img.shields.io/github/repo-size/reory/Health-Tracker-App?cacheSeconds=60)
 
-
-
 A modern, modular health‑tracking application built with Python and Flet.  
 It’s designed to manage medications, reminders, schedules, appointments, and user health data.  
 The architecture follows a clean separation of concerns with repositories, validators, services, and a background scheduler.
@@ -139,6 +137,7 @@ source venv/bin/activate
 
 ---
 
+# Run the App
 ```bash
 pip install -r requirements.txt
 python main.py
@@ -152,16 +151,19 @@ Planned enhancements and future improvements:
 
 - [ ] Add medication refill reminders  
 - [ ] Add data export/import (JSON or CSV)
-- [ ] Add Analytics Integration (In Development): Utilizing Matplotlib and Numpy for health trend visualization.
+- [ ] Add Analytics Integration (In Development): Utilizing Matplotlib and Numpy 
+      for health trend visualization
 - [ ] Add charts for intake history  
 - [ ] Add cloud sync or optional online backup  
-- [ ] Add multi‑user profiles  
+- [ ] Add multi‑user profiles - Using FAKER.
 - [ ] Add theme customisation (colour palettes)  
 - [ ] Add optional biometric lock (Windows Hello / Touch ID)  
 
+---
 
-🧪 Test File
+## 🧪 Test File
 A stripped‑down test file (test.py) is included for isolating UI behaviour.
+# Run the the Test Suite
 ```bash
 pytest
 ```
