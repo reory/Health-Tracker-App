@@ -81,7 +81,9 @@ The architecture follows a clean separation of concerns with repositories, valid
 
 ---
 
-# 🧱 Architecture Overview
+
+<details>
+  <summary>🧱 Architecture Overview</summary>
 
 The project is structured into clear, maintainable layers.
 
@@ -104,7 +106,9 @@ The project is structured into clear, maintainable layers.
 - Expands schedules into actual datetime events  
 
 ## 🕒 SchedulerService
-- Background thread that checks for due reminders every minute  
+- Background thread that checks for due reminders every minute
+
+</details>
 
 ---
 
