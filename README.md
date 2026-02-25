@@ -112,7 +112,8 @@ The project is structured into clear, maintainable layers.
 
 ---
 
-# 📂 Project Structure
+<details>
+  <summary>📂 Project Structure</summary>
 
 ```
 health_app/
@@ -126,6 +127,8 @@ health_app/
 ├── main.py
 └── README.md
 ```
+
+</details>
 
 ---
 
@@ -170,13 +173,16 @@ Planned enhancements and future improvements:
 </details>
 
 ---
+<details>
+  <summary>🧪 Test File</summary>
 
-## 🧪 Test File
 A stripped‑down test file (test.py) is included for isolating UI behaviour.
 # Run the the Test Suite
 ```bash
 pytest
 ```
+
+</details>
 
 ---
 
