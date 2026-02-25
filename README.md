@@ -44,7 +44,8 @@ The architecture follows a clean separation of concerns with repositories, valid
 
 ---
 
-# 📸 Screenshots
+<details>
+  <summary>📸 Screenshots</summary>
 
 ## Dashboard
 ![Dashboard](screenshots/dashboard.png)
@@ -75,6 +76,8 @@ The architecture follows a clean separation of concerns with repositories, valid
 
 ## Analytics Dashboard
 ![Analytics Dashboard](screenshots/analyticsdashboard.png)
+
+</details>
 
 ---
 
