@@ -152,7 +152,8 @@ python main.py
 
 ---
 
-# 🗺 Roadmap
+<details>
+  <summary>🗺 Roadmap</summary>
 
 Planned enhancements and future improvements:
 
@@ -164,7 +165,9 @@ Planned enhancements and future improvements:
 - [ ] Add cloud sync or optional online backup  
 - [ ] Add multi‑user profiles - Using FAKER.
 - [ ] Add theme customisation (colour palettes)  
-- [ ] Add optional biometric lock (Windows Hello / Touch ID)  
+- [ ] Add optional biometric lock (Windows Hello / Touch ID)
+
+</details>
 
 ---
 
