@@ -12,7 +12,7 @@ import io
 
 # Used for serializing images/charts into text-safe Base64 form.
 import base64
-from typing import Any, Dict, List
+from typing import Dict, List
 
 # Shared page interface for typed navigation.
 from ui_types.typed_page import TypedPage

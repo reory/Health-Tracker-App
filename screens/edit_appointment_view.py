@@ -1,6 +1,5 @@
 import flet as ft
 # Import Models.
-from models.appointment import Appointment
 from typing import Any
 
 

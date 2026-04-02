@@ -43,7 +43,6 @@ def dashboard_view(page: Any):
     meds = page.medication_repo.get_all()
     active_meds = [m for m in meds if m.is_active]
 
-    total_meds = len(meds)
     active_count = len(active_meds)
 
     # Small helper for consistent stat cards.

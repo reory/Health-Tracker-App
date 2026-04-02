@@ -2,7 +2,6 @@
 import threading
 # Provide the sleep() function for the minute by minute loop.
 import time
-from datetime import datetime
 
 # Imports from Data.
 from data.database import get_connection

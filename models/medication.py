@@ -1,6 +1,4 @@
 from dataclasses import dataclass, field
-from datetime import datetime
-from .dosage import Dosage
 from .schedule import Schedule
 from .base import BaseModel
 

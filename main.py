@@ -57,7 +57,8 @@ def main(page: TypedPage):
         schedule_repo=page.db.schedules
     )
 
-    reminder_service = ReminderService(
+    # * TODO: Wire ReminderService into SchedulerService in v2
+    _ = ReminderService(
         medication_repo=page.db.medications,
         schedule_repo=page.db.schedules,
         intake_repo=page.db.intake_logs,

@@ -124,7 +124,7 @@ class AppointmentRepository(AppointmentRepositoryProtocol):
         Assume the Appointment already exists: Callers handle missing IDS.
         """
 
-        cursor = self.db.execute(
+        self.db.execute(
             """
             UPDATE appointments
             SET title = ?, date = ?, time = ?, location = ?, notes = ?

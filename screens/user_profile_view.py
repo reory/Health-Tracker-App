@@ -103,7 +103,7 @@ def user_profile_view(page: Any) -> ft.View:
     def reset_profile(e):
         """Handles profile reset and reapplies default config values."""
 
-        default_name = UserProfile(
+        default_profile = UserProfile(
             name="",
             timezone="UTC",
             preferred_units={
@@ -114,6 +114,14 @@ def user_profile_view(page: Any) -> ft.View:
             emergency_contact="",
             notes="",
         )
+
+        page.db.user_profile.save_profile(default_profile)
+
+        page.snack_bar = ft.SnackBar(ft.Text("Profile reset to defaults"))
+        page.snack_bar.open = True
+        page.update()
+
+        page.show_dashboard()
 
     # UI layout
     return ft.View(
@@ -167,7 +175,7 @@ def user_profile_view(page: Any) -> ft.View:
                         on_click=cancel,
                     ),
                     ft.ElevatedButton(
-                        "Reset User Porfile",
+                        "Reset User Profile",
                         icon=ft.Icons.RESTORE,
                         bgcolor=ft.Colors.RED,
                         color=ft.Colors.BLACK,
