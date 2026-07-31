@@ -2,7 +2,6 @@
 # Stripped-down version to isolate UI behaviour.
 
 import flet as ft
-
 from data.database import Database
 from ui_types.typed_page import TypedPage
 

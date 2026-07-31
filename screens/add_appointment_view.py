@@ -4,7 +4,6 @@
 from typing import Any
 
 import flet as ft
-
 from models.appointment import Appointment
 
 

@@ -1,5 +1,4 @@
 import flet as ft
-
 from ui_types.typed_page import TypedPage
 
 
