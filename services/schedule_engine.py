@@ -1,27 +1,31 @@
-from datetime import datetime, timedelta
-from typing import List, Optional
+from datetime import datetime, timedelta, timezone
+
 # Import Data.
 from data.medication_repository import MedicationRepository
 from data.schedule_repository import ScheduleRepository
-# Import Models.
-from models.schedule import Schedule
 from models.medication import Medication
 
+# Import Models.
+from models.schedule import Schedule
 
 
 class ScheduleEngine:
     """Core logic layer for generating dosages, calculating next dosages,
     detecting overdue doses and providing a timeline data for the UI."""
 
-    def __init__(self, medication_repo: MedicationRepository, schedule_repo: ScheduleRepository):
+    def __init__(
+        self, medication_repo: MedicationRepository, schedule_repo: ScheduleRepository
+    ):
         """Provides access to medication and schedule storage layers."""
-        
+
         self.medication_repo = medication_repo
         self.schedule_repo = schedule_repo
 
-    def generate_dose_events(self, schedule: Schedule) -> List[datetime]:
-        """Generate all dose times between start_date and end_date.
-        supports frequencies: Daily or specific times per day."""
+    def generate_dose_events(self, schedule: Schedule) -> list[datetime]:
+        """
+        Generate all dose times between start_date and end_date.
+        supports frequencies: Daily or specific times per day.
+        """
 
         if schedule.end_date is None:
             return []
@@ -33,17 +37,18 @@ class ScheduleEngine:
 
         while current <= end:
             for dt in schedule.times:
-                dose_dt = datetime.combine(current, dt)
+                # Ensure combined datetime explicitly includes UTC timezone
+                dose_dt = datetime.combine(current, dt, tzinfo=timezone.utc)
                 dose_times.append(dose_dt)
             current += timedelta(days=1)
 
         return sorted(dose_times)
 
-    def get_next_dose(self, medication_id: int) -> Optional[datetime]:
+    def get_next_dose(self, medication_id: int) -> datetime | None:
         """Returns the next upcoming dose datetime for a given medication."""
 
         schedules = self.schedule_repo.get_by_medication(str(medication_id))
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
 
         upcoming = []
 
@@ -55,10 +60,10 @@ class ScheduleEngine:
 
         return min(upcoming) if upcoming else None
 
-    def get_today_schedule(self) -> List[tuple[Medication, datetime]]:
+    def get_today_schedule(self) -> list[tuple[Medication, datetime]]:
         """Returns a list of all doses scheduled for today."""
 
-        today = datetime.now().date()
+        today = datetime.now(timezone.utc).date()
         results = []
 
         medications = self.medication_repo.get_all()
@@ -76,11 +81,11 @@ class ScheduleEngine:
                         results.append((med, dt))
 
         return sorted(results, key=lambda x: x[1])
-    
-    def get_overdue_doses(self) -> List[tuple]:
+
+    def get_overdue_doses(self) -> list[tuple]:
         """Returns a list of doses that should have occurred already."""
 
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         results = []
 
         medications = self.medication_repo.get_all()
@@ -88,7 +93,7 @@ class ScheduleEngine:
         for med in medications:
             if med.id is None:
                 continue
-            
+
             schedules = self.schedule_repo.get_by_medication(med.id)
             for schedule in schedules:
                 dose_events = self.generate_dose_events(schedule)

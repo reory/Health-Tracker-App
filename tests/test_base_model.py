@@ -1,4 +1,4 @@
-import pytest
+import pytest #noqa
 from datetime import datetime, timezone
 from models.base import BaseModel
 import uuid

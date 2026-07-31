@@ -1,6 +1,7 @@
-import flet as ft
 # Import Models.
 from typing import Any
+
+import flet as ft
 
 
 def edit_appointment_view(page: Any, appointment_id: str) -> ft.View:

@@ -1,6 +1,8 @@
 from datetime import date, time
+
 # Import Models.
 from models.schedule import Schedule
+
 
 # A dedicated exception type for schedule validation errors.
 # Using a specific custom exception
@@ -8,7 +10,6 @@ from models.schedule import Schedule
 # validation issues and handle them efficiently.
 class ScheduleValidationError(Exception):
     """Custom exception for schedule validation errors."""
-    pass
 
 class ScheduleValidator:
     """Validates Schedule objects before saving or processing."""

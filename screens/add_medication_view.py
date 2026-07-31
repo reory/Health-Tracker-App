@@ -1,7 +1,10 @@
-import flet as ft
 from typing import Any
+
+import flet as ft
+
 # Import Models.
 from models.medication import Medication
+
 
 def add_medication_view(page: Any):
     """Form fields, Text fields are in this method to hold user info."""

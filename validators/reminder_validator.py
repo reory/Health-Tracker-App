@@ -1,9 +1,9 @@
 # Import Models.
 from models.reminder import Reminder
 
+
 class ReminderValidationError(Exception):
     """Custom exception for reminder validation errors."""
-    pass
 
 class ReminderValidator:
     """Validates reminder object before saving or validating."""

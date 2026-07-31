@@ -1,19 +1,22 @@
-from datetime import datetime, timedelta
-from typing import List
-# Import Models.
-from models.reminder_event import ReminderEvent
+from datetime import datetime, timedelta, timezone
+
+from data.intake_log_repository import IntakeLogRepository
+
 # Import Data.
 from data.medication_repository import MedicationRepository
-from data.schedule_repository import ScheduleRepository
-from data.intake_log_repository import IntakeLogRepository
 from data.reminder_repository import ReminderRepository
+from data.schedule_repository import ScheduleRepository
+
+# Import Models.
+from models.reminder_event import ReminderEvent
+
 # Import Services.
 from services.schedule_engine import ScheduleEngine
 
 
 class ReminderService:
     """
-    Generates runtime reminder events based on schedules, 
+    Generates runtime reminder events based on schedules,
     reminder settings, and intake logs.
     """
 
@@ -23,7 +26,7 @@ class ReminderService:
         schedule_repo: ScheduleRepository,
         intake_repo: IntakeLogRepository,
         reminder_repo: ReminderRepository,
-        schedule_engine: ScheduleEngine
+        schedule_engine: ScheduleEngine,
     ):  # Wire up medication, schedule, intake, reminders and scheduling engine.
         self.medication_repo = medication_repo
         self.schedule_repo = schedule_repo
@@ -31,7 +34,7 @@ class ReminderService:
         self.reminder_repo = reminder_repo
         self.schedule_engine = schedule_engine
 
-    def generate_events(self) -> List[ReminderEvent]:
+    def generate_events(self) -> list[ReminderEvent]:
         """Generate all reminder events for all schedules."""
 
         events = []
@@ -60,11 +63,11 @@ class ReminderService:
                     # Check if taken
                     taken = self._is_taken(
                         medication_id=schedule.medication_id,
-                        scheduled_time=scheduled_time
+                        scheduled_time=scheduled_time,
                     )
 
                     # Determine overdue
-                    now = datetime.now()
+                    now = datetime.now(timezone.utc)
                     overdue = (scheduled_time < now) and not taken
 
                     events.append(
@@ -80,7 +83,6 @@ class ReminderService:
 
         return events
 
-    
     # Helper method.
     def _is_taken(self, medication_id: str, scheduled_time: datetime) -> bool:
         """Return True if an intake log exists for this medication/time."""
@@ -91,42 +93,41 @@ class ReminderService:
                 return True
         return False
 
-
     # Filtered views
-    def get_upcoming(self) -> List[ReminderEvent]:
+    def get_upcoming(self) -> list[ReminderEvent]:
         """Return reminders whose reminder_time is in the future."""
 
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         return [
-            e for e in self.generate_events()
+            e
+            for e in self.generate_events()
             if e.reminder_time > now and not e.is_taken
         ]
 
-    def get_due(self) -> List[ReminderEvent]:
-        """Return reminders whose reminder_time 
-        has passed but scheduled_time has not."""
+    def get_due(self) -> list[ReminderEvent]:
+        """
+        Return reminders whose reminder_time
+        has passed but scheduled_time has not.
+        """
 
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         return [
-            e for e in self.generate_events()
+            e
+            for e in self.generate_events()
             if e.reminder_time <= now <= e.schedule_time and not e.is_taken
         ]
 
-    def get_overdue(self) -> List[ReminderEvent]:
+    def get_overdue(self) -> list[ReminderEvent]:
         """
-        Return reminders where the scheduled time has passed 
+        Return reminders where the scheduled time has passed
         and the dose was not taken.
         """
         return [e for e in self.generate_events() if e.is_overdue]
-    
 
     def get_next_for_medication(self, medication_id: str):
         """Return the next upcoming reminder for a specific medication."""
-        
-        upcoming = [
-            e for e in self.get_upcoming()
-            if e.medication_id == medication_id
-        ]
-        
+
+        upcoming = [e for e in self.get_upcoming() if e.medication_id == medication_id]
+
         # Select the next schedule reminder based on the reminder_time.
-        return min(upcoming, key=lambda e: e.reminder_time)if upcoming else None
+        return min(upcoming, key=lambda e: e.reminder_time) if upcoming else None

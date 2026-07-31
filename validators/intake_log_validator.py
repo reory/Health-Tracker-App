@@ -1,13 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
 # Import Models.
 from models.intake_log import IntakeLog
+
 
 # A dedicated exception type for intake log validation failures.
 # This allows the UI or repository to catch log-specific issues
 # and handle them cleanly.
 class IntakeLogValidationError(Exception):
     """Custom exception for intake log validation errors."""
-    pass
 
 
 class IntakeLogValidator:
@@ -57,7 +58,7 @@ class IntakeLogValidator:
             raise IntakeLogValidationError("scheduled_time must be a datetime or None.")
 
         # Optional: prevent future scheduled times.
-        if log.scheduled_time > datetime.now():
+        if log.scheduled_time > datetime.now(timezone.utc):
             raise IntakeLogValidationError("scheduled_time cannot be in the future.")
 
     @staticmethod
@@ -69,7 +70,7 @@ class IntakeLogValidator:
             raise IntakeLogValidationError("taken_time must be a datetime.")
 
         # taken_time cannot be in the future.
-        if log.taken_time > datetime.now():
+        if log.taken_time > datetime.now(timezone.utc):
             raise IntakeLogValidationError("taken_time cannot be in the future.")
 
         # Optional: ensure taken_time is not before scheduled_time.
@@ -111,7 +112,7 @@ class IntakeLogValidator:
             raise IntakeLogValidationError("created_at must be a datetime.")
         
         # Created log cannot be past the date of entry (in the future.)
-        if log.created_at > datetime.now():
+        if log.created_at > datetime.now(timezone.utc):
             raise IntakeLogValidationError("created_at cannot be in the future.")
         
     def add(self, log: IntakeLog):

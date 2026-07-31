@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
-from datetime import datetime, date, time
-from typing import List, Optional
 import uuid
+from dataclasses import dataclass, field
+from datetime import date, datetime, time
+
 
 @dataclass
 class Schedule:
@@ -12,14 +12,14 @@ class Schedule:
     # Stores the ID of the medication this item belongs to.
     medication_id: str = ""
     # Time of day the dose should be taken. anytime the user sets.
-    times: List[time] = field(default_factory=list)
+    times: list[time] = field(default_factory=list)
     # Daily, weekly, customizable
     frequency: str = "daily" 
     # Days of the week the dosage should be taken. (0=mon 6=sun) 
-    days_of_week: List[int] = field(default_factory=list)
+    days_of_week: list[int] = field(default_factory=list)
     # Start and end dates for the schedule.
     start_date: date = field(default_factory=date.today)
-    end_date: Optional[date] = None
+    end_date: date | None = None
     # Whether the schedule is currently active.
     is_active: bool = True
     # Timestamp when the schedule was created.

@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta, date, time
+from datetime import datetime, time, timedelta, timezone
 
+from models.reminder_event import ReminderEvent
+from models.schedule import Schedule
 from services.reminders import ReminderService
 from services.schedule_engine import ScheduleEngine
-from models.schedule import Schedule
-from models.reminder_event import ReminderEvent
-
 
 # -------------------------
 # Fake domain objects
@@ -65,15 +64,16 @@ class FakeIntakeRepo:
 # -------------------------
 
 def test_generate_events_creates_reminder_event():
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     scheduled_time = (now + timedelta(hours=2)).time()
+    today_utc = now.date()
 
     schedule = Schedule(
         id="sched1",
         medication_id="med1",
         times=[scheduled_time],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     reminder = FakeReminder(offset_minutes=30)
@@ -97,12 +97,13 @@ def test_generate_events_creates_reminder_event():
 
 
 def test_disabled_reminder_is_skipped():
+    today_utc = datetime.now(timezone.utc).date()
     schedule = Schedule(
         id="sched1",
         medication_id="med1",
         times=[time(9, 0)],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     reminder = FakeReminder(offset_minutes=15, enabled=False)
@@ -119,14 +120,15 @@ def test_disabled_reminder_is_skipped():
 
 
 def test_taken_dose_is_marked_taken():
-    scheduled_dt = datetime.combine(date.today(), time(8, 0))
+    today_utc = datetime.now(timezone.utc).date()
+    scheduled_dt = datetime.combine(today_utc, time(8, 0), tzinfo=timezone.utc)
 
     schedule = Schedule(
         id="sched1",
         medication_id="med1",
         times=[time(8, 0)],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     reminder = FakeReminder(offset_minutes=10)
@@ -146,14 +148,16 @@ def test_taken_dose_is_marked_taken():
 
 
 def test_get_overdue_returns_only_overdue():
-    past_time = (datetime.now() - timedelta(hours=2)).time()
+    now_utc = datetime.now(timezone.utc)
+    past_time = (now_utc - timedelta(hours=2)).time()
+    today_utc = now_utc.date()
 
     schedule = Schedule(
         id="sched1",
         medication_id="med1",
         times=[past_time],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     reminder = FakeReminder(offset_minutes=5)
@@ -172,22 +176,22 @@ def test_get_overdue_returns_only_overdue():
 
 
 def test_get_next_for_medication_returns_earliest():
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
 
     s1 = Schedule(
         id="s1",
         medication_id="med1",
         times=[(now + timedelta(hours=3)).time()],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=now.date(),
+        end_date=now.date()
     )
 
     s2 = Schedule(
         id="s2",
         medication_id="med1",
         times=[(now + timedelta(hours=1)).time()],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=now.date(),
+        end_date=now.date()
     )
 
     reminder = FakeReminder(offset_minutes=10)

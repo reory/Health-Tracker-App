@@ -1,18 +1,19 @@
 # Used to run the scheduler in the background.
 import threading
+
 # Provide the sleep() function for the minute by minute loop.
 import time
 
 # Imports from Data.
 from data.database import get_connection
-from data.schedule_repository import ScheduleRepository
-from data.reminder_repository import ReminderRepository
-from data.medication_repository import MedicationRepository
 from data.intake_log_repository import IntakeLogRepository
+from data.medication_repository import MedicationRepository
+from data.reminder_repository import ReminderRepository
+from data.schedule_repository import ScheduleRepository
+from services.notification_service import NotificationService
 
 # Imports from services.
 from services.reminders import ReminderService
-from services.notification_service import NotificationService
 from services.schedule_engine import ScheduleEngine
 
 

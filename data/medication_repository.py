@@ -1,22 +1,29 @@
 from __future__ import annotations
-from typing import List, Protocol
+
+import sqlite3
 from datetime import datetime
+from typing import Protocol
+
+from data.errors import DatabaseError, NotFoundError
+
+# Import Data.
+from data.schedule_repository import ScheduleRepositoryProtocol
+
 # Import Models.
 from models.medication import Medication
 from models.schedule import Schedule
-# Import Data.
-from data.schedule_repository import ScheduleRepositoryProtocol
-from data.errors import DatabaseError, NotFoundError
+
 # Import Validators.
 from validators.medication_validator import MedicationValidator
 
-class MedicationRepositoryProtocol(Protocol): 
-    """Outlines what a Medication repository must implement.""" 
 
-    def add(self, medication: Medication) -> Medication: ... 
-    def get_all(self) -> List[Medication]: ... 
-    def get_by_id(self, medication_id: str) -> Medication: ... 
-    def update(self, medication: Medication) -> Medication: ... 
+class MedicationRepositoryProtocol(Protocol):
+    """Outlines what a Medication repository must implement."""
+
+    def add(self, medication: Medication) -> Medication: ...
+    def get_all(self) -> list[Medication]: ...
+    def get_by_id(self, medication_id: str) -> Medication: ...
+    def update(self, medication: Medication) -> Medication: ...
     def delete(self, medication_id: str) -> None: ...
 
 
@@ -31,10 +38,10 @@ class MedicationRepository(MedicationRepositoryProtocol):
 
     def _create_table(self) -> None:
         """
-        Ensures the required table structure is 
+        Ensures the required table structure is
         in place during database setup.
         """
-        
+
         conn = self.connection
         cursor = conn.cursor()
 
@@ -53,13 +60,14 @@ class MedicationRepository(MedicationRepositoryProtocol):
                 """
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to create medications table: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to create medications table: {e}") from e
 
     def add(self, medication: Medication) -> Medication:
         """Validate and insert a new medication into the database."""
+
         MedicationValidator.validate(medication)
-        
+
         # Save schedules first.
         for sched in medication.schedule:
             self.schedule_repo.add(sched)
@@ -68,12 +76,11 @@ class MedicationRepository(MedicationRepositoryProtocol):
         cursor = conn.cursor()
 
         try:
-
             cursor.execute(
                 """
                 INSERT INTO medications (id, name, description, dosage, notes, is_active, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, 
+                """,
                 (
                     medication.id,
                     medication.name,
@@ -85,12 +92,12 @@ class MedicationRepository(MedicationRepositoryProtocol):
                 ),
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to insert medication: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to insert medication: {e}") from e
 
         return medication
 
-    def get_all(self) -> List[Medication]:
+    def get_all(self) -> list[Medication]:
         """Return all medications from the database."""
 
         conn = self.connection
@@ -99,8 +106,7 @@ class MedicationRepository(MedicationRepositoryProtocol):
         cursor.execute("SELECT * FROM medications")
         rows = cursor.fetchall()
 
-
-        meds =  [self._row_to_medication(row) for row in rows]
+        meds = [self._row_to_medication(row) for row in rows]
 
         return meds
 
@@ -114,18 +120,17 @@ class MedicationRepository(MedicationRepositoryProtocol):
         try:
             cursor.execute("SELECT * FROM medications WHERE id = ?", (medication_id,))
             row = cursor.fetchone()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch medication: {e}")
-        
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch medication: {e}") from e
+
         if row is None:
             raise NotFoundError(f"medication with id {medication_id} not found")
-        
+
         med = self._row_to_medication(row)
         MedicationValidator.validate(med)
         return med
 
     def update(self, medication: Medication) -> Medication:
-
         """Validate and update an existing medication."""
         MedicationValidator.validate(medication)
 
@@ -143,7 +148,7 @@ class MedicationRepository(MedicationRepositoryProtocol):
             UPDATE medications
             SET name = ?, description = ?, dosage = ?, notes = ?, is_active = ?
             WHERE id = ?
-            """, 
+            """,
             (
                 medication.name,
                 medication.description,
@@ -164,7 +169,6 @@ class MedicationRepository(MedicationRepositoryProtocol):
 
         cursor.execute("DELETE FROM medications WHERE id = ?", (medication_id,))
         conn.commit()
-        
 
     # Internal helper methods.
     def _row_to_medication(self, row) -> Medication:
@@ -185,14 +189,11 @@ class MedicationRepository(MedicationRepositoryProtocol):
         MedicationValidator.validate(med)
         return med
 
-    def _load_schedule(self, medication_id: str) -> List[Schedule]:
+    def _load_schedule(self, medication_id: str) -> list[Schedule]:
         """
-        Query storage for all Schedule objects 
+        Query storage for all Schedule objects
         associated with a given medication.
         """
+
         # Delegate to the schedule repository to load all related Schedule objects
         return self.schedule_repo.get_by_medication(medication_id)
-
-       
-
-        

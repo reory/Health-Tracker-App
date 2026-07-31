@@ -1,15 +1,16 @@
 # Access to SQLite database and its functions.
 import sqlite3
+
 # Object for working with files and folder paths.
 from pathlib import Path
+
 # Import Data.
 from data.appointment_repository import AppointmentRepository
-from data.medication_repository import MedicationRepository
-from data.schedule_repository import ScheduleRepository
-from data.reminder_repository import ReminderRepository
 from data.intake_log_repository import IntakeLogRepository
+from data.medication_repository import MedicationRepository
+from data.reminder_repository import ReminderRepository
+from data.schedule_repository import ScheduleRepository
 from data.user_profile_repository import UserProfileRepository
-
 
 # Path to the SQLite database file (stored inside the data folder)
 DB_PATH = Path(__file__).parent / "app.db"

@@ -2,12 +2,17 @@
 # Stripped-down version to isolate UI behaviour.
 
 import flet as ft
-from ui_types.typed_page import TypedPage
+
 from data.database import Database
+from ui_types.typed_page import TypedPage
 
 
 def medications_view(page: TypedPage) -> ft.View:
+    """Build and return the medications view for the given typed page."""
+
     def load_medications():
+        """Load and return the current list of medications from storage."""
+
         meds = page.medication_repo.get_all()
         items = []
 
@@ -64,5 +69,3 @@ def main(page: ft.Page):
 
 
 ft.app(target=main)
-
-

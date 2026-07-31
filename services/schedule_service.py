@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
+
 # Used to annotate functions returning a listof items.
-from typing import List
+from typing import list
+
 # Import Data.
 from data.reminder_repository import ReminderRepository
 from data.schedule_repository import ScheduleRepository
+
 # Import Models.
 from models.reminder import Reminder
 
@@ -20,11 +23,11 @@ class ScheduleService:
         self.reminder_repo = reminder_repo
         self.schedule_repo = schedule_repo
 
-    def get_due_reminders(self, now: datetime) -> List[Reminder]:
+    def get_due_reminders(self, now: datetime) -> list[Reminder]:
         """Compute which reminder are due based on the provided timestamp."""
 
         # A list to collect due reminders.
-        due: List[Reminder] = []
+        due: list[Reminder] = []
 
         #Fetch all reminders.
         reminders = self.reminder_repo.get_all()

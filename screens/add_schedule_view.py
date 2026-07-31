@@ -1,6 +1,7 @@
+from datetime import datetime, time, timezone
+
 import flet as ft
-import datetime
-from datetime import date, time
+
 # Import Models.
 from models.schedule import Schedule
 
@@ -14,13 +15,15 @@ def add_schedule_view(page, med_id: str) -> ft.View:
     frequency_field = ft.TextField(label="Frequency", value="daily")
     start_date_field = ft.TextField(
         label="Start Date (YYYY-MM-DD)",
-        value=date.today().isoformat(),
+        value=datetime.now(timezone.utc).date.isoformat(),
     )
     end_date_field = ft.TextField(label="End Date (optional)", value="")
 
     active_switch = ft.Switch(label="Active Schedule", value=True)
 
     def save_schedule(e):
+        """Handle a schedule-save event and persist the updated schedule data."""
+
         # Parse times
         parsed_times = []
         for t in (times_field.value or "").split(","):
@@ -38,10 +41,14 @@ def add_schedule_view(page, med_id: str) -> ft.View:
 
         # Parse dates safely
         start_raw = (start_date_field.value or "").strip()
-        start_dt = date.fromisoformat(start_raw) if start_raw else date.today()
+        start_dt = (
+            datetime.fromisoformat(start_raw).date()
+            if start_raw
+            else datetime.now(timezone.utc).date()
+        )
 
         end_raw = (end_date_field.value or "").strip()
-        end_dt = date.fromisoformat(end_raw) if end_raw else None
+        end_dt = datetime.fromisoformat(end_raw).date() if end_raw else None
 
         # Build schedule object
         schedule_obj = Schedule(
@@ -63,7 +70,7 @@ def add_schedule_view(page, med_id: str) -> ft.View:
         page.update()
 
         page.show_edit_medication(med_id)
-    
+
     # UI Layout.
     return ft.View(
         route="/add_schedule",
@@ -81,14 +88,12 @@ def add_schedule_view(page, med_id: str) -> ft.View:
                 content=ft.Column(
                     [
                         ft.Text("New Schedule", size=22, weight=ft.FontWeight.BOLD),
-
                         times_field,
                         days_field,
                         frequency_field,
                         start_date_field,
                         end_date_field,
                         active_switch,
-
                         ft.Row(
                             [
                                 ft.ElevatedButton(
@@ -98,7 +103,9 @@ def add_schedule_view(page, med_id: str) -> ft.View:
                                 ),
                                 ft.TextButton(
                                     "Cancel",
-                                    on_click=lambda _: page.show_edit_medication(med_id),
+                                    on_click=lambda _: page.show_edit_medication(
+                                        med_id
+                                    ),
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.END,

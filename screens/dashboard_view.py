@@ -1,5 +1,7 @@
-import flet as ft
 from typing import Any
+
+import flet as ft
+
 
 def quick_action(icon, label, on_click):
     """This fades in label on hover over the buttons."""

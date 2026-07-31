@@ -1,9 +1,12 @@
 # Allow type hints to refer to things not defined yet.
 from __future__ import annotations
+
 # Standard library module for interacting with SQLite databases.
 import sqlite3
+
 # Provides list/optional annotations and protocol for defining typed interfaces.
-from typing import List, Optional, Protocol
+from typing import Protocol
+
 # Import Models.
 from models.appointment import Appointment
 
@@ -12,8 +15,8 @@ class AppointmentRepositoryProtocol(Protocol):
     """Outlines what a Appointment repository must implement.""" 
 
     def add(self, appointment: Appointment) -> Appointment: ...
-    def get_all(self) -> List[Appointment]: ...
-    def get_by_id(self, appointment_id: str) -> Optional[Appointment]: ...
+    def get_all(self) -> list[Appointment]: ...
+    def get_by_id(self, appointment_id: str) -> Appointment | None: ...
     def update(self, appointment: Appointment) -> Appointment: ...
     def delete(self, appointment_id: str) -> None: ...
 
@@ -74,7 +77,7 @@ class AppointmentRepository(AppointmentRepositoryProtocol):
             notes=appointment.notes,
         )
     
-    def get_all(self) -> List[Appointment]:
+    def get_all(self) -> list[Appointment]:
         """Return every Appointment stored in the repository."""
 
         cursor = self.db.execute(

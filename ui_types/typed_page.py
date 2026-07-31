@@ -1,6 +1,9 @@
-import flet as ft
 # Import common typing helpers for functions signatures.
-from typing import Callable, Optional, Any
+from collections.abc import Callable
+from typing import Any
+
+import flet as ft
+
 
 class TypedPage(ft.Page):
     """Extend ft.Page with typed helpers and attributes."""
@@ -9,23 +12,23 @@ class TypedPage(ft.Page):
     db: Any = None
 
     # Navigation callbacks
-    show_dashboard: Optional[Callable] = None
+    show_dashboard: Callable | None = None
     
-    show_appointments: Optional[Callable] = None
-    show_edit_appointment: Optional[Callable] = None
-    show_add_appointment: Optional[Callable] = None
+    show_appointments: Callable | None = None
+    show_edit_appointment: Callable | None = None
+    show_add_appointment: Callable | None = None
 
-    show_medications: Optional[Callable] = None
-    show_add_medication: Optional[Callable] = None
-    show_edit_medication: Optional[Callable] = None
+    show_medications: Callable | None = None
+    show_add_medication: Callable | None = None
+    show_edit_medication: Callable | None = None
 
-    show_schedule: Optional[Callable] = None
-    show_add_schedule: Optional[Callable] = None
-    show_edit_schedule: Optional[Callable] = None
+    show_schedule: Callable | None = None
+    show_add_schedule: Callable | None = None
+    show_edit_schedule: Callable | None = None
 
-    show_user_profile: Optional[Callable] = None
-    show_settings: Optional[Callable] = None
-    show_analytics: Optional[Callable] = None
+    show_user_profile: Callable | None = None
+    show_settings: Callable | None = None
+    show_analytics: Callable | None = None
 
     # Repositories
     appointment_repo: Any = None
@@ -42,8 +45,8 @@ class TypedPage(ft.Page):
     snack_bar: Any = None
 
     # App start callback
-    start: Optional[Callable] = None
+    start: Callable | None = None
 
     # Window properties
-    window_width: Optional[int] = None
-    window_height: Optional[int] = None
+    window_width: int | None = None
+    window_height: int | None = None

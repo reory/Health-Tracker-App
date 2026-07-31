@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
+
 
 @dataclass
 class ReminderEvent:
@@ -23,4 +24,4 @@ class ReminderEvent:
 
         # Trigger only when scheduled time has passed.
         # And the event is still pending.
-        return datetime.now() >= self.reminder_time and not self.is_taken
+        return datetime.now(timezone.utc) >= self.reminder_time and not self.is_taken

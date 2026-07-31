@@ -1,4 +1,5 @@
 import flet as ft
+
 # Import Models.
 from models.medication import Medication
 

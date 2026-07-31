@@ -1,8 +1,11 @@
-import flet as ft
-# Import Data.
-from data.medication_repository import MedicationRepository
 # Allows accepting any type where flexibility is needed.
 from typing import Any
+
+import flet as ft
+
+# Import Data.
+from data.medication_repository import MedicationRepository
+
 
 class NotificationService:
     """
@@ -13,20 +16,17 @@ class NotificationService:
     def __init__(self, page: Any, medication_repo: MedicationRepository):
         """Wire up UI context and medication data access."""
 
-        # Keep a reference to the page so we can trigger UI updates.
+        # Keep a reference to the page to trigger UI updates.
         self.page = page
 
         self.medication_repo = medication_repo
 
         # Allow the settings screen to enable/disable notifications.
-        self.enabled=True
+        self.enabled = True
 
         # Create a resuable instance SnackBar instance ONCE
         # In Flet version 0.28.3, attachment of the object to the page overlay.
-        self.snack_bar = ft.SnackBar(
-            content=ft.Text(""),
-            action="OK"
-        )
+        self.snack_bar = ft.SnackBar(content=ft.Text(""), action="OK")
 
         # Add the snack bar to the page overlay so it can be shown later.
         self.page.overlay.append(self.snack_bar)
@@ -37,7 +37,7 @@ class NotificationService:
         # The settings toggle - so settings can turn notifications on/off
         if not self.enabled:
             return
-        
+
         # Look up medication name
         med = self.medication_repo.get_by_id(reminder.medication_id)
         if med is None:

@@ -1,6 +1,7 @@
+from datetime import time
+
 from models.medication import Medication
 from models.schedule import Schedule
-from datetime import time
 
 
 def test_medication_inherits_base_model():

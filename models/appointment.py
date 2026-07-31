@@ -1,5 +1,6 @@
 # Marks this class as a dataclass so field become typed attributes.
 from dataclasses import dataclass
+
 from .base import BaseModel
 
 

@@ -1,4 +1,3 @@
-import pytest
 from models.dosage import Dosage
 
 

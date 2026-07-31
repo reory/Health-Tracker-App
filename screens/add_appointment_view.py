@@ -1,9 +1,12 @@
 # Flet UI toolkit used for constructing and building the app interface.
-import flet as ft
-from models.appointment import Appointment
 # Using Any so the linter doesn't complain about 
 # custom page attributes (e.g., page.show_appointments)
 from typing import Any
+
+import flet as ft
+
+from models.appointment import Appointment
+
 
 def add_appointment_view(page: Any) -> ft.View:
     """Construct the appointment view."""

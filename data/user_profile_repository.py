@@ -1,6 +1,8 @@
 import json
+
 # Import Models.
 from models.user_profile import UserProfile
+
 
 class UserProfileRepository:
     """

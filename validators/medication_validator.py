@@ -1,13 +1,14 @@
 from datetime import datetime, timezone
+
 # Import Models.
 from models.medication import Medication
+
 
 # A dedicated exception type for medication validation failures.
 # This allows the UI or repository to catch medication-specific
 # issues and handle them cleanly.
 class MedicationValidationError(Exception):
     """Custom exception for medication validation errors."""
-    pass
 
 
 class MedicationValidator:

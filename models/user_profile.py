@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
+
 from .base import BaseModel
+
 
 @dataclass
 class UserProfile(BaseModel):

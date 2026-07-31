@@ -1,23 +1,23 @@
 # 8.1.25.
 import flet as ft
+
 # Import Data.
 from data.database import Database
-# Trying to silence the linter as the flet code accpets dynamic attributes.
-from ui_types.typed_page import TypedPage
+from screens.add_appointment_view import add_appointment_view
+from screens.add_medication_view import add_medication_view
+from screens.add_schedule_view import add_schedule_view
+from screens.analytics_view import analytics_view
+from screens.appointments_view import appointments_view
 
 # Import screens.
 from screens.dashboard_view import dashboard_view
-from screens.appointments_view import appointments_view
-from screens.add_appointment_view import add_appointment_view
 from screens.edit_appointment_view import edit_appointment_view
-from screens.medications_view import medications_view
-from screens.add_medication_view import add_medication_view
 from screens.edit_medication_view import edit_medication_view
-from screens.add_schedule_view import add_schedule_view
 from screens.edit_schedule_view import edit_schedule_view
+from screens.medications_view import medications_view
 from screens.settings_view import settings_view
 from screens.user_profile_view import user_profile_view
-from screens.analytics_view import analytics_view
+
 # Import services
 from services.notification_service import NotificationService
 from services.reminders import ReminderService
@@ -25,6 +25,8 @@ from services.schedule_engine import ScheduleEngine
 from services.schedule_service import ScheduleService
 from services.scheduler_service import SchedulerService
 
+# Trying to silence the linter as the flet code accpets dynamic attributes.
+from ui_types.typed_page import TypedPage
 
 
 # App configuration

@@ -1,6 +1,7 @@
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-import uuid
+
 
 @dataclass
 class IntakeLog:

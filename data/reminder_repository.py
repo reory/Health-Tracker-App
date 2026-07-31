@@ -1,11 +1,17 @@
 from __future__ import annotations
-from typing import List, Protocol
-# Import Models
-from models.reminder import Reminder
-# Import Validators.
-from validators.reminder_validator import ReminderValidator
+
+import sqlite3
+from typing import Protocol
+
 # Import Data.
 from data.errors import DatabaseError, NotFoundError
+
+# Import Models
+from models.reminder import Reminder
+
+# Import Validators.
+from validators.reminder_validator import ReminderValidator
+
 
 class ReminderRepositoryProtocol(Protocol): 
     """Outlines what a Reminder repository must implement.""" 
@@ -14,9 +20,9 @@ class ReminderRepositoryProtocol(Protocol):
     def update(self, reminder: Reminder) -> Reminder: ... 
     def delete(self, reminder_id: str) -> None: ... 
     def get_by_id(self, reminder_id: str) -> Reminder: ... 
-    def get_all(self) -> List[Reminder]: ... 
-    def get_by_schedule(self, schedule_id: str) -> List[Reminder]: ... 
-    def get_by_medication(self, medication_id: str) -> List[Reminder]: ...
+    def get_all(self) -> list[Reminder]: ... 
+    def get_by_schedule(self, schedule_id: str) -> list[Reminder]: ... 
+    def get_by_medication(self, medication_id: str) -> list[Reminder]: ...
 
 
 
@@ -54,8 +60,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
                 """
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to create reminders table: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to create reminders table: {e}") from e
         
     # CRUD operations.
 
@@ -86,8 +92,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
                 ),
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to insert reminder: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to insert reminder: {e}") from e
         
         return reminder
 
@@ -122,8 +128,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
                 ),
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to update reminder: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to update reminder: {e}") from e
         
 
         return reminder
@@ -137,8 +143,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
         try:
             cursor.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to delete reminder: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to delete reminder: {e}") from e
         
 
     def get_by_id(self, reminder_id: str) -> Reminder:
@@ -150,8 +156,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
         try:
             cursor.execute("SELECT * FROM reminders WHERE id = ?", (reminder_id,))
             row = cursor.fetchone()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch reminder: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch reminder: {e}") from e
         
         if row is None:
             raise NotFoundError(f"Reminder with id {reminder_id} not found")
@@ -160,7 +166,7 @@ class ReminderRepository(ReminderRepositoryProtocol):
         ReminderValidator.validate(reminder)
         return reminder
 
-    def get_all(self) -> List[Reminder]:
+    def get_all(self) -> list[Reminder]:
         """Return a list of all reminders."""
 
         conn = self.connection
@@ -169,13 +175,13 @@ class ReminderRepository(ReminderRepositoryProtocol):
         try:
             cursor.execute("SELECT * FROM reminders")
             rows = cursor.fetchall()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch reminders: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch reminders: {e}") from e
         
 
         return [self._row_to_reminder(r) for r in rows]
 
-    def get_by_schedule(self, schedule_id: str) -> List[Reminder]:
+    def get_by_schedule(self, schedule_id: str) -> list[Reminder]:
         """Return a list of reminders by schedule."""
 
         conn = self.connection
@@ -190,12 +196,12 @@ class ReminderRepository(ReminderRepositoryProtocol):
                 (schedule_id,)
             )
             rows = cursor.fetchall()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch reminders for schedule {schedule_id}: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch reminders for schedule {schedule_id}: {e}") from e
         
         return [self._row_to_reminder(r) for r in rows]
 
-    def get_by_medication(self, medication_id: str) -> List[Reminder]:
+    def get_by_medication(self, medication_id: str) -> list[Reminder]:
         """Return a list of reminders by medication."""
 
         conn = self.connection
@@ -210,8 +216,8 @@ class ReminderRepository(ReminderRepositoryProtocol):
                 (medication_id,)
             )
             rows = cursor.fetchall()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch reminders for medication {medication_id}: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch reminders for medication {medication_id}: {e}") from e
     
         return [self._row_to_reminder(r) for r in rows]
 

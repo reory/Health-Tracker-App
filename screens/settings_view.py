@@ -1,5 +1,7 @@
-import flet as ft
 from typing import Any
+
+import flet as ft
+
 
 def settings_view(page: Any) -> ft.View:
     """Construct the settings view using the shared page context."""

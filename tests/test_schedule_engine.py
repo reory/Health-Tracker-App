@@ -1,9 +1,8 @@
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, time, timedelta, timezone
 
-from models.schedule import Schedule
 from models.medication import Medication
+from models.schedule import Schedule
 from services.schedule_engine import ScheduleEngine
-
 
 
 # Fake repositories
@@ -25,10 +24,11 @@ class FakeScheduleRepo:
 
 # Tests
 def test_generate_dose_events_basic():
+    today_utc = datetime.now(timezone.utc).date()
     schedule = Schedule(
         times=[time(8, 0), time(20, 0)],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     engine = ScheduleEngine(None, None)
@@ -40,9 +40,10 @@ def test_generate_dose_events_basic():
 
 
 def test_generate_dose_events_no_end_date():
+    today_utc = datetime.now(timezone.utc).date()
     schedule = Schedule(
         times=[time(9, 0)],
-        start_date=date.today(),
+        start_date=today_utc,
         end_date=None
     )
 
@@ -53,13 +54,14 @@ def test_generate_dose_events_no_end_date():
 
 
 def test_get_next_dose_returns_future_dose():
-    now = datetime.now()
-    later_today = (now + timedelta(hours=2)).time()
+    now_utc = datetime.now(timezone.utc)
+    later_today = (now_utc + timedelta(hours=2)).time()
+    today_utc = now_utc.date()
 
     schedule = Schedule(
         times=[later_today],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     med = Medication(id="1", name="TestMed")
@@ -68,19 +70,21 @@ def test_get_next_dose_returns_future_dose():
     sched_repo = FakeScheduleRepo({"1": [schedule]})
 
     engine = ScheduleEngine(med_repo, sched_repo)
-    next_dose = engine.get_next_dose(1)
+    next_dose = engine.get_next_dose("1")
 
     assert next_dose is not None
-    assert next_dose > now
+    assert next_dose > now_utc
 
 
 def test_get_next_dose_returns_none_if_no_future():
-    past_time = (datetime.now() - timedelta(hours=2)).time()
+    now_utc = datetime.now(timezone.utc)
+    past_time = (now_utc - timedelta(hours=2)).time()
+    today_utc = now_utc.date()
 
     schedule = Schedule(
         times=[past_time],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     med = Medication(id="1")
@@ -90,14 +94,14 @@ def test_get_next_dose_returns_none_if_no_future():
 
     engine = ScheduleEngine(med_repo, sched_repo)
 
-    assert engine.get_next_dose(1) is None
+    assert engine.get_next_dose("1") is None
 
 
 def test_get_today_schedule_returns_sorted_results():
-    today = date.today()
+    today_utc = datetime.now(timezone.utc).date()
 
-    s1 = Schedule(times=[time(20, 0)], start_date=today, end_date=today)
-    s2 = Schedule(times=[time(8, 0)], start_date=today, end_date=today)
+    s1 = Schedule(times=[time(20, 0)], start_date=today_utc, end_date=today_utc)
+    s2 = Schedule(times=[time(8, 0)], start_date=today_utc, end_date=today_utc)
 
     med = Medication(id="1", name="TestMed")
 
@@ -113,13 +117,15 @@ def test_get_today_schedule_returns_sorted_results():
 
 
 def test_get_overdue_doses_returns_past_only():
-    past_time = (datetime.now() - timedelta(hours=3)).time()
-    future_time = (datetime.now() + timedelta(hours=3)).time()
+    now_utc = datetime.now(timezone.utc)
+    past_time = (now_utc - timedelta(hours=3)).time()
+    future_time = (now_utc + timedelta(hours=3)).time()
+    today_utc = now_utc.date()
 
     schedule = Schedule(
         times=[past_time, future_time],
-        start_date=date.today(),
-        end_date=date.today()
+        start_date=today_utc,
+        end_date=today_utc
     )
 
     med = Medication(id="1")
@@ -131,4 +137,4 @@ def test_get_overdue_doses_returns_past_only():
     overdue = engine.get_overdue_doses()
 
     assert len(overdue) == 1
-    assert overdue[0][1] < datetime.now()
+    assert overdue[0][1] < now_utc

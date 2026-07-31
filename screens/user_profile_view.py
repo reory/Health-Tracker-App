@@ -1,7 +1,10 @@
-import flet as ft
 from typing import Any
+
+import flet as ft
+
 # Import Models.
 from models.user_profile import UserProfile
+
 
 def user_profile_view(page: Any) -> ft.View:
     """Generates a User profile screen."""

@@ -1,23 +1,28 @@
-from __future__ import annotations 
+from __future__ import annotations
 
 # Handles serializing and loading data in JSON format.
 import json
-from typing import List, Protocol
-from datetime import datetime
-# Import Models.
-from models.schedule import Schedule
-# Import Validators.
-from validators.schedule_validator import ScheduleValidator
+import sqlite3
+from datetime import datetime, timezone
+from typing import Protocol
+
 # Import Data.
 from data.errors import DatabaseError, NotFoundError
+
+# Import Models.
+from models.schedule import Schedule
+
+# Import Validators.
+from validators.schedule_validator import ScheduleValidator
+
 
 class ScheduleRepositoryProtocol(Protocol): 
     """Outlines what a Schedule repository must implement.""" 
 
     def add(self, schedule: Schedule) -> Schedule: ... 
-    def get_all(self) -> List[Schedule]: ...
+    def get_all(self) -> list[Schedule]: ...
     def get_by_id(self, schedule_id: str) -> Schedule: ... 
-    def get_by_medication(self, medication_id: str) -> List[Schedule]: ... 
+    def get_by_medication(self, medication_id: str) -> list[Schedule]: ... 
     def update(self, schedule: Schedule) -> Schedule: ... 
     def delete(self, schedule_id: str) -> None: ... 
     def delete_by_medication(self, medication_id: str) -> None: ...
@@ -55,8 +60,8 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
                 """
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to create schedules table: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to create schedules table: {e}") from e
         
         
     # CRUD operations. (Create, Read Update and Delete operations.)
@@ -91,12 +96,12 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
                 ),
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to insert schedule: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to insert schedule: {e}") from e
         
         return schedule
 
-    def get_all(self) -> List[Schedule]:
+    def get_all(self) -> list[Schedule]:
         """Return a list of all schedules."""
 
         conn = self.connection
@@ -105,8 +110,8 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
         try:
             cursor.execute("SELECT * FROM schedules")
             rows = cursor.fetchall()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch schedules: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch schedules: {e}") from e
         
         return [self._row_to_schedule(row) for row in rows]
 
@@ -119,8 +124,8 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
         try:
             cursor.execute("SELECT * FROM schedules WHERE id = ?", (schedule_id,))
             row = cursor.fetchone()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch schedule: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch schedule: {e}") from e
         
         if row is None:
             raise NotFoundError(f"Schedule with id {schedule_id} not found")
@@ -129,7 +134,7 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
         ScheduleValidator.validate(schedule)
         return schedule
 
-    def get_by_medication(self, medication_id: str) -> List[Schedule]:
+    def get_by_medication(self, medication_id: str) -> list[Schedule]:
         """Return all schedules associated with a medication."""
 
         conn = self.connection
@@ -139,10 +144,10 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
             cursor.execute("SELECT * FROM schedules WHERE medication_id = ?", 
                            (medication_id,))
             rows = cursor.fetchall()
-        except Exception as e:
+        except sqlite3.Error as e:
             raise DatabaseError(
                 f"Failed to fetch schedules for medication {medication_id}: {e}"
-            )
+            ) from e
         
         return [self._row_to_schedule(row) for row in rows]
 
@@ -181,8 +186,8 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
                 ),
             )
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to update schedule: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to update schedule: {e}") from e
         
         return schedule
 
@@ -195,8 +200,8 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
         try:
             cursor.execute("DELETE FROM schedules WHERE id = ?;", (schedule_id,))
             conn.commit()
-        except Exception as e:
-            raise DatabaseError(f"Failed to delete schedule: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to delete schedule: {e}") from e
         
     def delete_by_medication(self, medication_id: str) -> None:
         """Delete every entry associated with the given ID"""
@@ -210,10 +215,10 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
                 (medication_id,),
             )
             conn.commit()
-        except Exception as e:
+        except sqlite3.error as e:
             raise DatabaseError(
                 f"Failed to delete schedules for medication {medication_id}: {e}"
-            )
+            ) from e
         
     # Internal helpers.
     def _row_to_schedule(self, row) -> Schedule:
@@ -222,7 +227,12 @@ class ScheduleRepository(ScheduleRepositoryProtocol):
         # Make app better to identify malformed data - 
         # such as data with missing rows, corrupted DB rows, etc.
         raw_times =json.loads(row["times"]) or []
-        times = [datetime.strptime(t, "%H:%M").time() for t in raw_times]
+        times = [
+            datetime.strptime(t, "%H:%M")
+            .replace(tzinfo=timezone.utc)
+            .time()
+            for t in raw_times
+        ]
         days = json.loads(row["days_of_week"]) or []
 
         schedule = Schedule(

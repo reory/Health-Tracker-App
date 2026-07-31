@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
-from .schedule import Schedule
+
 from .base import BaseModel
+from .schedule import Schedule
+
 
 @dataclass
 class Medication(BaseModel):

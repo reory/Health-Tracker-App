@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import sqlite3
+
 # Used for storing and formatting timestamps.
 from datetime import datetime
-from typing import List, Protocol
-# Import Models.
-from models.intake_log import IntakeLog
-# Import Validators.
-from validators.intake_log_validator import IntakeLogValidator
+from typing import Protocol
+
 # Import Data.
 from data.errors import DatabaseError, NotFoundError
+
+# Import Models.
+from models.intake_log import IntakeLog
+
+# Import Validators.
+from validators.intake_log_validator import IntakeLogValidator
+
 
 class IntakeLogRepositoryProtocol(Protocol): 
     """Outlines what a Intake log repository must implement."""  
@@ -17,8 +23,8 @@ class IntakeLogRepositoryProtocol(Protocol):
     def update(self, log: IntakeLog) -> IntakeLog: ... 
     def delete(self, log_id: str) -> None: ... 
     def get_by_id(self, log_id: str) -> IntakeLog: ... 
-    def get_all(self) -> List[IntakeLog]: ... 
-    def get_by_medication(self, medication_id: str) -> List[IntakeLog]: ...
+    def get_all(self) -> list[IntakeLog]: ... 
+    def get_by_medication(self, medication_id: str) -> list[IntakeLog]: ...
 
 
 class IntakeLogRepository(IntakeLogRepositoryProtocol):
@@ -131,8 +137,8 @@ class IntakeLogRepository(IntakeLogRepositoryProtocol):
 
             cursor.execute("SELECT * FROM intake_logs WHERE id = ?", (log_id,))
             row = cursor.fetchone()
-        except Exception as e:
-            raise DatabaseError(f"Failed to fetch intake log: {e}")
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Failed to fetch intake log: {e}") from e
 
         if row is None:
             raise NotFoundError(f"Intake log with id {log_id} not found.")
@@ -142,7 +148,7 @@ class IntakeLogRepository(IntakeLogRepositoryProtocol):
         return log
     
 
-    def get_all(self) -> List[IntakeLog]:
+    def get_all(self) -> list[IntakeLog]:
         """Return every Intake log stored in the repository."""
 
         conn = self.connection
@@ -154,7 +160,7 @@ class IntakeLogRepository(IntakeLogRepositoryProtocol):
 
         return [self._row_to_intake_log(r) for r in rows]
 
-    def get_by_medication(self, medication_id: str) -> List[IntakeLog]:
+    def get_by_medication(self, medication_id: str) -> list[IntakeLog]:
         """Fetch every Intake log recorded for the given medication."""
 
         conn = self.connection

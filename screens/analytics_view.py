@@ -2,17 +2,17 @@ import flet as ft
 
 # Core plotting library - used for charts, analytics and visualizations.
 import matplotlib
+
 matplotlib.use("Agg") # Use a non-GUI backend. Use Flet GUI only.
 
 # Pyplot interface that creates charts.
-import matplotlib.pyplot as plt
+# Used for serializing images/charts into text-safe Base64 form.
+import base64
 
 # Enables creating byte buffers for passing images to Flet.
 import io
 
-# Used for serializing images/charts into text-safe Base64 form.
-import base64
-from typing import Dict, List
+import matplotlib.pyplot as plt
 
 # Shared page interface for typed navigation.
 from ui_types.typed_page import TypedPage
@@ -36,7 +36,7 @@ def build_intake_time_series(page: TypedPage) -> ft.Image:
     medications = {m.id: m for m in page.db.medications.get_all()}
 
     # Group logs by medication.
-    grouped: Dict[str, Dict[str, List]] = {}
+    grouped: dict[str, dict[str, list]] = {}
     for log in intake_logs:
         med = medications.get(log.medication_id)
         if med is None:
@@ -67,7 +67,7 @@ def build_intake_time_series(page: TypedPage) -> ft.Image:
         ax.set_axis_off()
         return fig_to_image(fig)
     
-    for med_id, data in grouped.items():
+    for med_id, data in grouped.values():
         ax.plot(
             data["times"],
             data["amounts"],

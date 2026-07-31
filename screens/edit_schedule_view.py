@@ -1,8 +1,10 @@
+from datetime import date, datetime, time, timezone
+
 import flet as ft
-import datetime
-from datetime import date, time
+
 # Import Models.
 from models.schedule import Schedule
+
 
 def edit_schedule_view(page, med_id: str) -> ft.View:
     """Edit or create a schedule for a medication."""
@@ -15,7 +17,7 @@ def edit_schedule_view(page, med_id: str) -> ft.View:
     times_str = ", ".join(t.strftime("%H:%M") for t in sched.times) if sched else "" 
     days_str = ", ".join(str(d) for d in (sched.days_of_week if sched else [])) 
     frequency_str = sched.frequency if sched else "daily" 
-    start_str = sched.start_date.isoformat() if sched else date.today().isoformat() 
+    start_str = sched.start_date.isoformat() if sched else datetime.now(timezone.utc).date().isoformat() 
     end_str = sched.end_date.isoformat() if (sched and sched.end_date) else "" 
 
     times_field = ft.TextField(label="Times (HH:MM, comma-separated)", value=times_str) 
@@ -49,10 +51,14 @@ def edit_schedule_view(page, med_id: str) -> ft.View:
 
         # Parse dates.
         start_raw = (start_date_field.value or "").strip()
-        start_dt = date.fromisoformat(start_raw) if start_raw else date.today()
+        start_dt = (
+            date.fromisoformat(start_raw) 
+            if start_raw 
+            else datetime.now(timezone.utc).date()
+        )
 
         end_raw = (end_date_field.value or "").strip()
-        end_dt = date.fromisoformat(end_raw) if end_raw else None
+        end_dt = datetime.fromisoformat(end_raw).date() if end_raw else None
     
         # Build schedule object.
         schedule_obj = Schedule(
