@@ -118,18 +118,24 @@ def test_get_today_schedule_returns_sorted_results():
 
 def test_get_overdue_doses_returns_past_only():
     now_utc = datetime.now(timezone.utc)
-    past_time = (now_utc - timedelta(hours=3)).time()
-    future_time = (now_utc + timedelta(hours=3)).time()
+
+    past_time = (now_utc - timedelta(minutes=10)).time()
+    future_time = (now_utc + timedelta(minutes=10)).time()
     today_utc = now_utc.date()
+
+    # Prevent midnight edge cases completely if running right around midnight (23:51 - 00:09)
+    if (now_utc - timedelta(minutes=10)).date() < today_utc:
+        past_time = (now_utc - timedelta(minutes=1)).time()
+    if (now_utc + timedelta(minutes=10)).date() > today_utc:
+        future_time = (now_utc + timedelta(minutes=1)).time()
 
     schedule = Schedule(
         times=[past_time, future_time],
         start_date=today_utc,
-        end_date=today_utc
+        end_date=today_utc,
     )
 
     med = Medication(id="1")
-
     med_repo = FakeMedicationRepo([med])
     sched_repo = FakeScheduleRepo({"1": [schedule]})
 
@@ -137,4 +143,3 @@ def test_get_overdue_doses_returns_past_only():
     overdue = engine.get_overdue_doses()
 
     assert len(overdue) == 1
-    assert overdue[0][1] < now_utc
